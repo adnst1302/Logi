@@ -5,11 +5,11 @@ import (
 	"time"
 )
 
-type BalanceUser struct {
+type BalanceMember struct {
 	gorm.Model
-	PlayId  string
-	Amount  float32
-	Type    string
-	TrxID   string
-	TrxTime time.Time
+	Username string
+	Amount   float32
+	Type     string
+	TrxID    string
+	TrxTime  time.Time
 }

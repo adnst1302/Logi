@@ -12,7 +12,9 @@ func main() {
 
 	rt := echo.New()
 	rtV1 := rt.Group("/v1")
-
+	// member
+	
+	// balance
 	rtV1.POST("/balance/check", controller.CheckBalance)
 
 	rt.Logger.Fatal(rt.Start(":8001"))

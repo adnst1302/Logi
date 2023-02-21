@@ -28,7 +28,13 @@ func Connect() {
 }
 
 func Migrate() {
-	err = Instance.AutoMigrate(&scm.BalanceUser{})
+	//delAllTable()
+	err = Instance.AutoMigrate(&scm.BalanceMember{}, &scm.Member{}, &scm.MemberProfile{})
 	helper.Pie(err)
 	log.Println("Migrasi database selesai ...")
+}
+
+func delAllTable() {
+	err := Instance.Migrator().DropTable("balance_members", "members", "member_profiles")
+	helper.Pie(err)
 }
