@@ -17,6 +17,7 @@ func Execute() {
 	rtV1 := rt.Group("/v1")
 	// member
 	rtV1.POST("/member/create", controller.CreateMember)
+	rtV1.GET("/member/list", controller.GetAllMembers)
 	// balance
 	rtV1.POST("/balance/check", controller.CheckBalance)
 
