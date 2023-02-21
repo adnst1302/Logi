@@ -13,7 +13,7 @@ func main() {
 	rt := echo.New()
 	rtV1 := rt.Group("/v1")
 	// member
-	
+	rtV1.POST("/member/create", controller.CreateMember)
 	// balance
 	rtV1.POST("/balance/check", controller.CheckBalance)
 
