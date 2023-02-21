@@ -1,11 +1,11 @@
 package controller
 
 import (
-	"Logi/apps"
+	"Logi/api/model/pyl"
+	"Logi/api/model/resp"
+	"Logi/api/model/scm"
+	"Logi/app"
 	"Logi/helper"
-	"Logi/model/pyl"
-	"Logi/model/resp"
-	"Logi/model/scm"
 	"github.com/labstack/echo/v4"
 	"log"
 	"net/http"
@@ -28,7 +28,7 @@ func CreateMember(c echo.Context) error {
 
 	respSucessCreateMember.Message = "Success create member"
 
-	apps.Instance.Create(&scmCreateMember)
+	app.Instance.Create(&scmCreateMember)
 
 	respCreateMember.Data = respSucessCreateMember
 	respCreateMember.Code = 200

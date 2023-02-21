@@ -1,8 +1,8 @@
-package apps
+package app
 
 import (
+	"Logi/api/model/scm"
 	"Logi/helper"
-	"Logi/model/scm"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
@@ -29,7 +29,7 @@ func Connect() {
 
 func Migrate() {
 	//delAllTable()
-	err = Instance.AutoMigrate(&scm.BalanceMember{}, &scm.Member{}, &scm.MemberProfile{})
+	err = Instance.AutoMigrate(&scm.Member{}, &scm.MemberProfile{})
 	helper.Pie(err)
 	log.Println("Migrasi database selesai ...")
 }

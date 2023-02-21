@@ -1,21 +1,7 @@
 package main
 
-import (
-	"Logi/apps"
-	"Logi/controller"
-	"github.com/labstack/echo/v4"
-)
+import "Logi/cmd"
 
 func main() {
-	apps.Connect()
-	apps.Migrate()
-
-	rt := echo.New()
-	rtV1 := rt.Group("/v1")
-	// member
-	rtV1.POST("/member/create", controller.CreateMember)
-	// balance
-	rtV1.POST("/balance/check", controller.CheckBalance)
-
-	rt.Logger.Fatal(rt.Start(":8001"))
+	cmd.Execute()
 }
