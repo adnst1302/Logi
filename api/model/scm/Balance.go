@@ -14,5 +14,6 @@ type BalanceTransaction struct {
 	TypeTrans string
 	CreateBy  string
 	ApproveBy string
+	Desc      string
 	TrxTime   time.Time
 }

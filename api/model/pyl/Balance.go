@@ -11,4 +11,5 @@ type AddTransaction struct {
 	TypeTrans string  `json:"typeTrans"`
 	CreateBy  string  `json:"createBy"`
 	ApproveBy string  `json:"approveBy"`
+	Desc      string  `json:"desc"`
 }

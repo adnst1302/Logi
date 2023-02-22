@@ -55,11 +55,12 @@ func AddTransaction(c echo.Context) resp.AddTransaction {
 			TypeTrans: pylAddTransaction.TypeTrans,
 			CreateBy:  pylAddTransaction.CreateBy,
 			ApproveBy: pylAddTransaction.ApproveBy,
+			Desc:      pylAddTransaction.Desc,
 			TrxTime:   time.Now(),
 		}
 		app.Instance.Create(&scmBalTrans)
 		respAddTransaction.Code = 200
-		respAddTransaction.Message = "Success add transaction with trxId."
+		respAddTransaction.Message = "Success add transaction with trxId." + trxId
 		respAddTransaction.Success = true
 	}
 
