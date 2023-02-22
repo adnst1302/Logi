@@ -1,9 +1,9 @@
 package resp
 
 type CreateMember struct {
-	Success bool        `json:"success"`
-	Code    int         `json:"code"`
-	Data    interface{} `json:"data"`
+	Success bool   `json:"success"`
+	Code    int    `json:"code"`
+	Message string `json:"data"`
 }
 
 type UpdateProfileMember struct {
@@ -12,9 +12,10 @@ type UpdateProfileMember struct {
 	Message  string `json:"message"`
 }
 
-// CreateMember.DataCreateMember
-type DataCreateMember struct {
-	Message string `json:"message"`
+type DeleteMember struct {
+	Succcess bool   `json:"succcess"`
+	Code     int    `json:"code"`
+	Message  string `json:"message"`
 }
 
 type GetAllMember struct {
@@ -22,6 +23,13 @@ type GetAllMember struct {
 	Code    int                `json:"code"`
 	Data    []DataGetAllMember `json:"data"`
 	Message string             `json:"message"`
+}
+
+type DetailMember struct {
+	Success bool        `json:"status"`
+	Code    int         `json:"code"`
+	Data    interface{} `json:"data"`
+	Message string      `json:"message"`
 }
 
 // GetAllMember.DataGetAllMember

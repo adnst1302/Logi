@@ -17,7 +17,6 @@ func CreateMember(c echo.Context) resp.CreateMember {
 
 	checkMember := CheckMember(pylCreateMember.UserId)
 	respCreateMember := resp.CreateMember{}
-	respDataCreateMember := resp.DataCreateMember{}
 
 	if checkMember == false {
 		hash, _ := helper.HashPassword(pylCreateMember.Password)
@@ -29,14 +28,12 @@ func CreateMember(c echo.Context) resp.CreateMember {
 		}
 		app.Instance.Create(&scmCreateMember)
 
-		respDataCreateMember.Message = "Create member sukses"
-		respCreateMember.Data = respDataCreateMember
+		respCreateMember.Message = "Create member sukses"
 		respCreateMember.Code = 200
 		respCreateMember.Success = true
 		log.Print("Create member sukses")
 	} else {
-		respDataCreateMember.Message = "Gagal create member, user id sudah terdaftar"
-		respCreateMember.Data = respDataCreateMember
+		respCreateMember.Message = "Gagal create member, user id sudah terdaftar"
 		respCreateMember.Code = 400
 		respCreateMember.Success = false
 		log.Print("Gagal create member, user id sudah terdaftar")
@@ -75,6 +72,33 @@ func GetAllMembers(c echo.Context) resp.GetAllMember {
 	return respGetAllMember
 }
 
+func DetailMember(c echo.Context) resp.DetailMember {
+	pylDetailMember := new(pyl.DetailMember)
+	err := c.Bind(pylDetailMember)
+	helper.Pie(err)
+
+	checkMember := CheckMember(pylDetailMember.UserId)
+	respDetailMember := resp.DetailMember{}
+	if checkMember == false {
+		respDetailMember.Message = "Failed, userId not found!!!"
+		respDetailMember.Code = 400
+		respDetailMember.Success = false
+	} else {
+		var rMember = GetDataMember(pylDetailMember.UserId)
+		memberOneData := resp.DataGetAllMember{
+			UserId:  rMember.UserId,
+			Email:   rMember.Email,
+			Role:    rMember.Role,
+			Profile: GetProfileMember(pylDetailMember.UserId),
+		}
+		respDetailMember.Message = "Success get detail member."
+		respDetailMember.Code = 200
+		respDetailMember.Success = true
+		respDetailMember.Data = memberOneData
+	}
+	return respDetailMember
+}
+
 func UpdateProfileMember(c echo.Context) resp.UpdateProfileMember {
 	pylUpdateProfileMember := new(pyl.UpdateProfileMember)
 	err := c.Bind(pylUpdateProfileMember)
@@ -88,7 +112,7 @@ func UpdateProfileMember(c echo.Context) resp.UpdateProfileMember {
 		respUpdateProfileMember.Message = "Gagal update member, userId tidak terdaftar!!!"
 		respUpdateProfileMember.Succcess = false
 	} else {
-		DeleteMember(pylUpdateProfileMember.UserId)
+		SubDeleteProfileMember(pylUpdateProfileMember.UserId)
 		scmMemberProfile := &scm.MemberProfile{
 			UserId:         pylUpdateProfileMember.UserId,
 			FullName:       pylUpdateProfileMember.FullName,
@@ -111,7 +135,35 @@ func UpdateProfileMember(c echo.Context) resp.UpdateProfileMember {
 	return respUpdateProfileMember
 }
 
-func DeleteMember(userId string) bool {
+func DeleteMember(c echo.Context) resp.DeleteMember {
+	pylDeleteMember := new(pyl.DeleteMember)
+	err := c.Bind(pylDeleteMember)
+	helper.Pie(err)
+	checkMember := CheckMember(pylDeleteMember.UserId)
+	respDeleteMember := resp.DeleteMember{}
+
+	if checkMember == false {
+		respDeleteMember.Code = 400
+		respDeleteMember.Message = "Failed delete member data, userId not found!!!"
+		respDeleteMember.Succcess = false
+	} else {
+		SubDeleteMember(pylDeleteMember.UserId)
+		SubDeleteProfileMember(pylDeleteMember.UserId)
+		respDeleteMember.Code = 200
+		respDeleteMember.Message = "Success delete member."
+		respDeleteMember.Succcess = true
+	}
+
+	return respDeleteMember
+}
+
+func SubDeleteMember(userId string) bool {
+	var member scm.Member
+	app.Instance.Where("user_id = ?", userId).Unscoped().Delete(&member)
+	return true
+}
+
+func SubDeleteProfileMember(userId string) bool {
 	var memberProfile scm.MemberProfile
 	app.Instance.Where("user_id = ?", userId).Unscoped().Delete(&memberProfile)
 	return true
@@ -142,11 +194,13 @@ func GetDataMember(userId string) resp.DataGetAllMember {
 }
 
 func GetProfileMember(userId string) resp.ProfileDataGetAllMember {
+	var memberProfile scm.MemberProfile
+	app.Instance.Where("user_id = ?", userId).First(&memberProfile)
 	respProfileDataGetAllMember := resp.ProfileDataGetAllMember{}
-	respProfileDataGetAllMember.FullName = "Aditia Darma Nst"
-	respProfileDataGetAllMember.BirthDate = "25-01-1995"
-	respProfileDataGetAllMember.PhoneNumber = "082272177022"
-	respProfileDataGetAllMember.PlaceOfBirth = "Pondok Cemara"
-	respProfileDataGetAllMember.Address = "Medan Perjuangan"
+	respProfileDataGetAllMember.FullName = memberProfile.FullName
+	respProfileDataGetAllMember.BirthDate = memberProfile.BirthDate
+	respProfileDataGetAllMember.PhoneNumber = memberProfile.PhoneNumber
+	respProfileDataGetAllMember.PlaceOfBirth = memberProfile.PlaceOfBirth
+	respProfileDataGetAllMember.Address = memberProfile.Address
 	return respProfileDataGetAllMember
 }

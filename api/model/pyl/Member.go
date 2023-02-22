@@ -19,3 +19,11 @@ type UpdateProfileMember struct {
 	SignInDate     string `json:"signInDate"`
 	StatusEmployee string `json:"statusEmployee"`
 }
+
+type DeleteMember struct {
+	UserId string `json:"userId"`
+}
+
+type DetailMember struct {
+	UserId string `json:"userId"`
+}

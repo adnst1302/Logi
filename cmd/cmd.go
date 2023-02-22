@@ -16,9 +16,11 @@ func Execute() {
 	rt := echo.New()
 	rtV1 := rt.Group("/v1")
 	// member
-	rtV1.POST("/member/create", controller.CreateMember)
 	rtV1.GET("/member/list", controller.GetAllMembers)
+	rtV1.POST("/member/create", controller.CreateMember)
 	rtV1.POST("/member/profile/update", controller.UpdateProfileMember)
+	rtV1.POST("/member/delete", controller.DeleteMember)
+	rtV1.POST("/member/detail", controller.DetailMember)
 	// balance
 	rtV1.POST("/balance/check", controller.CheckBalance)
 

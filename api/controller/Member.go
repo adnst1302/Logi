@@ -20,3 +20,13 @@ func UpdateProfileMember(c echo.Context) error {
 	respUpdateProfileMember := service.UpdateProfileMember(c)
 	return c.JSON(http.StatusOK, respUpdateProfileMember)
 }
+
+func DeleteMember(c echo.Context) error {
+	respDeleteMember := service.DeleteMember(c)
+	return c.JSON(http.StatusOK, respDeleteMember)
+}
+
+func DetailMember(c echo.Context) error {
+	respDetailMember := service.DetailMember(c)
+	return c.JSON(http.StatusOK, respDetailMember)
+}
