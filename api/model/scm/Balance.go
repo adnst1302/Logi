@@ -9,7 +9,7 @@ type BalanceTransaction struct {
 	gorm.Model
 	TrxId     string
 	UserId    string
-	Amount    string
+	Amount    float64
 	Flow      string
 	TypeTrans string
 	CreateBy  string
