@@ -6,9 +6,7 @@ import (
 	"Logi/api/model/scm"
 	"Logi/app"
 	"Logi/helper"
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
-	"time"
 )
 
 func CheckBalance(c echo.Context) resp.CheckBalance {
@@ -24,7 +22,8 @@ func CheckBalance(c echo.Context) resp.CheckBalance {
 		respCheckBalance.Success = false
 		respCheckBalance.Message = "Failed check balance, userid not found!!!"
 	} else {
-		respCheckBalance.Balance = 0
+
+		respCheckBalance.Balance = SubGetBalanceMember(pylCheckBalance.UserId)
 		respCheckBalance.Code = 200
 		respCheckBalance.Success = true
 		respCheckBalance.Message = "Check balance success."
@@ -33,36 +32,18 @@ func CheckBalance(c echo.Context) resp.CheckBalance {
 	return respCheckBalance
 }
 
-func AddTransaction(c echo.Context) resp.AddTransaction {
-	pylAddTransaction := new(pyl.AddTransaction)
-	err := c.Bind(pylAddTransaction)
-	helper.Pie(err)
+func SubGetBalanceMember(userId string) float64 {
+	var balances []scm.BalanceTransaction
+	app.Instance.Where("user_id = ?", userId).Find(&balances)
 
-	checkMember := app.CheckMember(pylAddTransaction.UserId)
-	respAddTransaction := resp.AddTransaction{}
+	var fb float64
 
-	if checkMember == false {
-		respAddTransaction.Code = 400
-		respAddTransaction.Message = "Failed add transaction, user id not found!!!"
-		respAddTransaction.Success = false
-	} else {
-		trxId := uuid.New().String()
-		scmBalTrans := scm.BalanceTransaction{
-			TrxId:     trxId,
-			UserId:    pylAddTransaction.UserId,
-			Amount:    pylAddTransaction.Amount,
-			Flow:      pylAddTransaction.Flow,
-			TypeTrans: pylAddTransaction.TypeTrans,
-			CreateBy:  pylAddTransaction.CreateBy,
-			ApproveBy: pylAddTransaction.ApproveBy,
-			Desc:      pylAddTransaction.Desc,
-			TrxTime:   time.Now(),
+	for x := 0; x < len(balances); x++ {
+		if balances[x].Flow == "CREDIT" {
+			fb += balances[x].Amount
+		} else {
+			fb -= balances[x].Amount
 		}
-		app.Instance.Create(&scmBalTrans)
-		respAddTransaction.Code = 200
-		respAddTransaction.Message = "Success add transaction with trxId." + trxId
-		respAddTransaction.Success = true
 	}
-
-	return respAddTransaction
+	return fb
 }
