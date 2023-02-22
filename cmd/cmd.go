@@ -21,7 +21,8 @@ func Execute() {
 	rtV1.POST("/member/profile/update", controller.UpdateProfileMember)
 	rtV1.POST("/member/delete", controller.DeleteMember)
 	rtV1.POST("/member/detail", controller.DetailMember)
-	// balance
+	// balance & transaction
+	rtV1.POST("/transaction/add", controller.AddTransaction)
 	rtV1.POST("/balance/check", controller.CheckBalance)
 
 	rt.Logger.Fatal(rt.Start(":8001"))

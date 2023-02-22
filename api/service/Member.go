@@ -15,7 +15,7 @@ func CreateMember(c echo.Context) resp.CreateMember {
 	err := c.Bind(pylCreateMember)
 	helper.Pie(err)
 
-	checkMember := CheckMember(pylCreateMember.UserId)
+	checkMember := app.CheckMember(pylCreateMember.UserId)
 	respCreateMember := resp.CreateMember{}
 
 	if checkMember == false {
@@ -77,7 +77,7 @@ func DetailMember(c echo.Context) resp.DetailMember {
 	err := c.Bind(pylDetailMember)
 	helper.Pie(err)
 
-	checkMember := CheckMember(pylDetailMember.UserId)
+	checkMember := app.CheckMember(pylDetailMember.UserId)
 	respDetailMember := resp.DetailMember{}
 	if checkMember == false {
 		respDetailMember.Message = "Failed, userId not found!!!"
@@ -104,7 +104,7 @@ func UpdateProfileMember(c echo.Context) resp.UpdateProfileMember {
 	err := c.Bind(pylUpdateProfileMember)
 	helper.Pie(err)
 
-	checkMember := CheckMember(pylUpdateProfileMember.UserId)
+	checkMember := app.CheckMember(pylUpdateProfileMember.UserId)
 	respUpdateProfileMember := resp.UpdateProfileMember{}
 
 	if checkMember == false {
@@ -112,7 +112,7 @@ func UpdateProfileMember(c echo.Context) resp.UpdateProfileMember {
 		respUpdateProfileMember.Message = "Gagal update member, userId tidak terdaftar!!!"
 		respUpdateProfileMember.Succcess = false
 	} else {
-		SubDeleteProfileMember(pylUpdateProfileMember.UserId)
+		app.DeleteProfileMember(pylUpdateProfileMember.UserId)
 		scmMemberProfile := &scm.MemberProfile{
 			UserId:         pylUpdateProfileMember.UserId,
 			FullName:       pylUpdateProfileMember.FullName,
@@ -139,7 +139,7 @@ func DeleteMember(c echo.Context) resp.DeleteMember {
 	pylDeleteMember := new(pyl.DeleteMember)
 	err := c.Bind(pylDeleteMember)
 	helper.Pie(err)
-	checkMember := CheckMember(pylDeleteMember.UserId)
+	checkMember := app.CheckMember(pylDeleteMember.UserId)
 	respDeleteMember := resp.DeleteMember{}
 
 	if checkMember == false {
@@ -147,37 +147,14 @@ func DeleteMember(c echo.Context) resp.DeleteMember {
 		respDeleteMember.Message = "Failed delete member data, userId not found!!!"
 		respDeleteMember.Succcess = false
 	} else {
-		SubDeleteMember(pylDeleteMember.UserId)
-		SubDeleteProfileMember(pylDeleteMember.UserId)
+		app.DeleteMember(pylDeleteMember.UserId)
+		app.DeleteProfileMember(pylDeleteMember.UserId)
 		respDeleteMember.Code = 200
 		respDeleteMember.Message = "Success delete member."
 		respDeleteMember.Succcess = true
 	}
 
 	return respDeleteMember
-}
-
-func SubDeleteMember(userId string) bool {
-	var member scm.Member
-	app.Instance.Where("user_id = ?", userId).Unscoped().Delete(&member)
-	return true
-}
-
-func SubDeleteProfileMember(userId string) bool {
-	var memberProfile scm.MemberProfile
-	app.Instance.Where("user_id = ?", userId).Unscoped().Delete(&memberProfile)
-	return true
-}
-
-func CheckMember(userId string) bool {
-	var members []scm.Member
-	app.Instance.Where("user_id = ?", userId).Find(&members)
-
-	if len(members) < 1 {
-		return false
-	} else {
-		return true
-	}
 }
 
 func GetDataMember(userId string) resp.DataGetAllMember {
