@@ -15,3 +15,8 @@ func GetAllMembers(c echo.Context) error {
 	respServGetAllMember := service.GetAllMembers(c)
 	return c.JSON(http.StatusOK, respServGetAllMember)
 }
+
+func UpdateProfileMember(c echo.Context) error {
+	respUpdateProfileMember := service.UpdateProfileMember(c)
+	return c.JSON(http.StatusOK, respUpdateProfileMember)
+}

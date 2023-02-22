@@ -6,6 +6,12 @@ type CreateMember struct {
 	Data    interface{} `json:"data"`
 }
 
+type UpdateProfileMember struct {
+	Succcess bool   `json:"succcess"`
+	Code     int    `json:"code"`
+	Message  string `json:"message"`
+}
+
 // CreateMember.DataCreateMember
 type DataCreateMember struct {
 	Message string `json:"message"`

@@ -55,9 +55,10 @@ func GetAllMembers(c echo.Context) resp.GetAllMember {
 		var rMember = GetDataMember(userId)
 
 		memberOneData := resp.DataGetAllMember{
-			UserId: rMember.UserId,
-			Email:  rMember.Email,
-			Role:   rMember.Role,
+			UserId:  rMember.UserId,
+			Email:   rMember.Email,
+			Role:    rMember.Role,
+			Profile: rMember.Profile,
 		}
 		respDataGetAllMember = append(respDataGetAllMember, memberOneData)
 	}
@@ -72,6 +73,48 @@ func GetAllMembers(c echo.Context) resp.GetAllMember {
 	}
 
 	return respGetAllMember
+}
+
+func UpdateProfileMember(c echo.Context) resp.UpdateProfileMember {
+	pylUpdateProfileMember := new(pyl.UpdateProfileMember)
+	err := c.Bind(pylUpdateProfileMember)
+	helper.Pie(err)
+
+	checkMember := CheckMember(pylUpdateProfileMember.UserId)
+	respUpdateProfileMember := resp.UpdateProfileMember{}
+
+	if checkMember == false {
+		respUpdateProfileMember.Code = 400
+		respUpdateProfileMember.Message = "Gagal update member, userId tidak terdaftar!!!"
+		respUpdateProfileMember.Succcess = false
+	} else {
+		DeleteMember(pylUpdateProfileMember.UserId)
+		scmMemberProfile := &scm.MemberProfile{
+			UserId:         pylUpdateProfileMember.UserId,
+			FullName:       pylUpdateProfileMember.FullName,
+			PlaceOfBirth:   pylUpdateProfileMember.PlaceOfBirth,
+			BirthDate:      pylUpdateProfileMember.BirthDate,
+			PhoneNumber:    pylUpdateProfileMember.PhoneNumber,
+			Address:        pylUpdateProfileMember.Address,
+			EducationLevel: pylUpdateProfileMember.EducationLevel,
+			Division:       pylUpdateProfileMember.Division,
+			SignInDate:     pylUpdateProfileMember.SignInDate,
+			StatusEmployee: pylUpdateProfileMember.StatusEmployee,
+		}
+		app.Instance.Create(scmMemberProfile)
+
+		respUpdateProfileMember.Code = 200
+		respUpdateProfileMember.Message = "Success update member."
+		respUpdateProfileMember.Succcess = true
+	}
+
+	return respUpdateProfileMember
+}
+
+func DeleteMember(userId string) bool {
+	var memberProfile scm.MemberProfile
+	app.Instance.Where("user_id = ?", userId).Unscoped().Delete(&memberProfile)
+	return true
 }
 
 func CheckMember(userId string) bool {
@@ -100,6 +143,10 @@ func GetDataMember(userId string) resp.DataGetAllMember {
 
 func GetProfileMember(userId string) resp.ProfileDataGetAllMember {
 	respProfileDataGetAllMember := resp.ProfileDataGetAllMember{}
-	respProfileDataGetAllMember.FullName = "Aditia"
+	respProfileDataGetAllMember.FullName = "Aditia Darma Nst"
+	respProfileDataGetAllMember.BirthDate = "25-01-1995"
+	respProfileDataGetAllMember.PhoneNumber = "082272177022"
+	respProfileDataGetAllMember.PlaceOfBirth = "Pondok Cemara"
+	respProfileDataGetAllMember.Address = "Medan Perjuangan"
 	return respProfileDataGetAllMember
 }
